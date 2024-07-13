@@ -1,5 +1,7 @@
 const apiKey = 'cf657a8801df04ca1ab9d454608dce73';
-
+document.addEventListener('DOMContentLoaded', () => {
+    getUserLocation(); // Request location access immediately after page load
+});
 document.getElementById('getWeather').addEventListener('click', () => {
     const city = document.getElementById('city').value;
     // try {
