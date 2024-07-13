@@ -2,7 +2,18 @@ const apiKey = 'cf657a8801df04ca1ab9d454608dce73';
 
 document.getElementById('getWeather').addEventListener('click', () => {
     const city = document.getElementById('city').value;
-    getWeather(city);
+    try {
+         if (city != "") {
+        getWeather(city);
+    } else {
+       throw new Error("Please enter a city")
+        }
+    } catch (error) {
+        document.getElementById('weather').innerHTML = `<p>${error.message}</p>`;
+        document.getElementById('weather').style.color = 'red'
+    }
+   
+  
 });
 
 document.getElementById('getLocation').addEventListener('click', () => {
@@ -17,9 +28,9 @@ function getWeather(city) {
             // if () {
             //     throw new Error('Enter a city');
             // }
-            // if (!response.ok) {
-            //     throw new Error('City not found');
-            // }
+            if (!response.ok) {
+                throw new Error('City not found');
+            }
             console.log(response);
             return response.json();
         })
