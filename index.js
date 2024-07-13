@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     };
     getUserLocation(); 
+    getForecast();
 });
 
 document.getElementById('toggleDarkMode').addEventListener('change', (event) => {
