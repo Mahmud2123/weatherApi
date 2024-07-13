@@ -2,16 +2,16 @@ const apiKey = 'cf657a8801df04ca1ab9d454608dce73';
 
 document.getElementById('getWeather').addEventListener('click', () => {
     const city = document.getElementById('city').value;
-    try {
-         if (city != "") {
+    // try {
+    //      if (city != "") {
         getWeather(city);
-    } else {
-       throw new Error("Please enter a city")
-        }
-    } catch (error) {
-        document.getElementById('weather').innerHTML = `<p>${error.message}</p>`;
-        document.getElementById('weather').style.color = 'red'
-    }
+    // } else {
+    //    throw new Error("Please enter a city")
+    //     }
+    // } catch (error) {
+    //     document.getElementById('weather').innerHTML = `<p>${error.message}</p>`;
+    //     document.getElementById('weather').style.color = 'red'
+    // }
    
   
 });
@@ -21,20 +21,19 @@ document.getElementById('getLocation').addEventListener('click', () => {
 });
 
 function getWeather(city) {
-    const url = `https://api.openweathermap.org/data/2.5/weather?id=${city}&appid=${apiKey}&units=metric`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    console.log("Fetching weather data from:", url);  // Log the URL
 
     fetch(url)
         .then(response => {
-            // if () {
-            //     throw new Error('Enter a city');
-            // }
+            console.log("Response status:", response.status);  // Log the response status
             if (!response.ok) {
                 throw new Error('City not found');
             }
-            console.log(response);
             return response.json();
         })
         .then(data => {
+            console.log("Weather data received:", data);  // Log the received data
             displayWeather(data);
         })
         .catch(error => {
@@ -42,6 +41,7 @@ function getWeather(city) {
             document.getElementById('weather').style.color = 'red';
         });
 }
+
 
 function getUserLocation() {
     if (navigator.geolocation) {
