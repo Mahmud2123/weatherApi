@@ -7,15 +7,30 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Weather App</h1>
-        <div class="input-group">
-            <input type="text" id="city" placeholder="Enter city name or use your current Location">
-            <button id="getWeather">Get Weather</button>
-            <button id="getLocation">Use My Location</button>
-        </div>
-        <div id="weather"></div>
+     <header>
+          <h1>Weather App</h1>
+          <div style="display: flex; align-items: center;">
+              <label class="toggle-switch">
+                  <input type="checkbox" id="toggleDarkMode">
+                  <span class="slider"></span>
+              </label>
+              <span id="modeLabel">Dark Mode</span>
+          </div>
+     </header>
+     <div class="error">    
+        <span id="error"></span>
     </div>
+ 
+    <input type="text" id="city" placeholder="Enter city">
+    <button id="getWeather">Get Weather</button>
+    <button id="getLocation">Use My Location</button>
+    <select id="unitSelect">
+        <option value="metric">Celsius</option>
+        <option value="imperial">Fahrenheit</option>
+    </select>
+
+    <div id="weather"></div>
+    <div id="forecast"></div>
 
     <script src="index.js"></script>
 </body>
