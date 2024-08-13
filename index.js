@@ -1,12 +1,12 @@
 const apiKey = '87c11aed1f8a54b9843b4d73c6951ef5';
+
 document.addEventListener('DOMContentLoaded', () => {
     if (!navigator.onLine) {
-        //document.getElementById('error').innerHTML = 'Error loading: Check your internet connection'
-         alert('You are currently offline');
+        alert('You are currently offline');
         return;
-    };
+    }
     getUserLocation(); 
-    getForecast();
+    displaySearchHistory();
 });
 
 document.getElementById('toggleDarkMode').addEventListener('change', (event) => {
@@ -16,8 +16,7 @@ document.getElementById('toggleDarkMode').addEventListener('change', (event) => 
 
 document.getElementById('getWeather').addEventListener('click', () => {
     if (!navigator.onLine) {
-        document.getElementById('error').innerHTML = 'You are current offline'
-        alert('You are current offline');
+        document.getElementById('error').innerHTML = 'You are currently offline';
         return;
     }
     const city = document.getElementById('city').value;
@@ -26,19 +25,14 @@ document.getElementById('getWeather').addEventListener('click', () => {
         getWeather(city, unit);
         saveSearch(city);
     } else {
-         document.getElementById('error').innerHTML = 'Please enter a city'
-        // alert("Please enter a city");
-    };
+        document.getElementById('error').innerHTML = 'Please enter a city';
+    }
     setTimeout(() => {
         document.getElementById('error').innerHTML = '';
     }, 2000);
 });
 
 document.getElementById('getLocation').addEventListener('click', getUserLocation);
-
-document.getElementById('toggleDarkMode').addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-});
 
 function getWeather(city, unit) {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${unit}`;
@@ -53,14 +47,12 @@ function getWeather(city, unit) {
         })
         .catch(error => {
             document.getElementById('weather').innerHTML = `<p>${error.message}</p>`;
-            console.log(error);
         });
 }
 
 function getUserLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
-            console.log(position);
             const { latitude, longitude } = position.coords;
             getWeatherByCoordinates(latitude, longitude);
         }, () => {
@@ -78,6 +70,7 @@ function getWeatherByCoordinates(lat, lon) {
         .then(response => response.json())
         .then(data => {
             displayWeather(data);
+            getForecastByCoordinates(lat, lon);
         })
         .catch(error => {
             document.getElementById('weather').innerHTML = `<p>${error.message}</p>`;
@@ -96,17 +89,49 @@ function getForecast(city, unit) {
         });
 }
 
+function getForecastByCoordinates(lat, lon) {
+    const unit = document.getElementById('unitSelect').value;
+    const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            displayForecast(data);
+        })
+        .catch(error => {
+            document.getElementById('forecast').innerHTML = `<p>${error.message}</p>`;
+        });
+}
+
 function displayWeather(data) {
     const weatherDiv = document.getElementById('weather');
-    const { name, main, weather } = data;
+    const { name, main, weather, wind, sys } = data;
     const icon = weather[0].icon;
+    const sunrise = new Date(sys.sunrise * 1000).toLocaleTimeString();
+    const sunset = new Date(sys.sunset * 1000).toLocaleTimeString();
 
     weatherDiv.innerHTML = `
         <h2>Weather in ${name}</h2>
         <p>Temperature: ${main.temp} °C</p>
         <p>Condition: ${weather[0].description}</p>
-        <img src="http://openweathermap.org/img/wn/${icon}@2x.png" alt="Weather icon">
+        <p>Wind Speed: ${wind.speed} m/s</p>
+        <p>Humidity: ${main.humidity}%</p>
+        <p>Sunrise: ${sunrise}</p>
+        <p>Sunset: ${sunset}</p>
+        <img src="http://openweathermap.org/img/wn/${icon}@2x.png" alt="Weather icon" class="${icon.includes('01d') ? 'sun-icon' : ''}">
     `;
+
+    updateBackground(weather[0].description);
+}
+
+function updateBackground(weatherCondition) {
+    const body = document.body;
+    if (weatherCondition.includes('rain')) {
+        body.style.backgroundImage = "url('rainy_background.jpg')";
+    } else if (weatherCondition.includes('clear')) {
+        body.style.backgroundImage = "url('sunny_background.jpg')";
+    } else {
+        body.style.backgroundImage = "url('default_background.jpg')";
+    }
 }
 
 function displayForecast(data) {
@@ -116,10 +141,14 @@ function displayForecast(data) {
         const date = new Date(item.dt * 1000);
         const temp = item.main.temp;
         const condition = item.weather[0].description;
+        const icon = item.weather[0].icon;
 
         forecastDiv.innerHTML += `
-            <div>
-                <p>${date.toLocaleDateString()}: ${temp} °C, ${condition}</p>
+            <div class="forecast-card">
+                <p>${date.toLocaleDateString()}</p>
+                <img src="http://openweathermap.org/img/wn/${icon}@2x.png" alt="Weather icon">
+                <p>${temp} °C</p>
+                <p>${condition}</p>
             </div>
         `;
     });
@@ -127,6 +156,18 @@ function displayForecast(data) {
 
 function saveSearch(city) {
     let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
-    history.push(city);
-    localStorage.setItem('searchHistory', JSON.stringify(history));
+    if (!history.includes(city)) {
+        history.push(city);
+        localStorage.setItem('searchHistory', JSON.stringify(history));
+    }
+    displaySearchHistory();
+}
+
+function displaySearchHistory() {
+    let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    const historyDiv = document.getElementById('history');
+    historyDiv.innerHTML = '<h3>Recent Searches:</h3>';
+    history.forEach(city => {
+        historyDiv.innerHTML += `<button onclick="getWeather('${city}', '${document.getElementById('unitSelect').value}')">${city}</button>`;
+    });
 }
