@@ -5,15 +5,18 @@ body {
     transition: background-color 0.5s, color 0.5s;
     margin: 0;
     padding: 20px;
+    background-image: url('default_background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 header {
     display: flex;
-    justify-content: space-between; /* Aligns items to the edges */
-    align-items: center; /* Vertically centers items */
+    justify-content: space-between; 
+    align-items: center; 
     padding: 10px 20px;
     background-color: #f0f0f0;
-    border: 2px solid #ccc; /* Add border */
+    border: 2px solid #ccc;
     border-radius: 8px;
     margin: 20px;
 }
@@ -21,19 +24,22 @@ header {
 h1 {
     text-align: center;
     color: #00796b;
-    margin: 0; /* Remove margin to align better */
+    margin: 0;
 }
-.error{
+
+.error {
     text-align: center;
-      color: red;
-      font-size: 20px;
+    color: red;
+    font-size: 20px;
 }
+
 input[type="text"], select {
     padding: 10px;
     margin: 10px 0;
     border: 2px solid #00796b;
     border-radius: 5px;
     width: calc(100% - 22px);
+    transition: background-color 0.5s, color 0.5s;
 }
 
 button {
@@ -62,9 +68,35 @@ button:hover {
     max-width: 600px;
 }
 
+.forecast-card {
+    display: inline-block;
+    width: 120px;
+    margin: 10px;
+    padding: 10px;
+    background-color: #e0f7fa;
+    border-radius: 8px;
+    color: black;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .dark-mode {
     background-color: #263238;
-    color: black; 
+    color: #e0f7fa; /* Light text color for better readability */
+}
+
+.dark-mode input[type="text"], 
+.dark-mode select, 
+.dark-mode button {
+    border-color: #00796b;
+    background-color: #37474f; /* Darker background for inputs and buttons */
+    color: #e0f7fa; /* Light text color for inputs and buttons */
+}
+
+.dark-mode #weather, 
+.dark-mode #forecast {
+    border-color: #00796b;
+    background-color: #455a64; /* Darker background for weather and forecast sections */
 }
 
 .toggle-switch {
@@ -72,7 +104,7 @@ button:hover {
     display: inline-block;
     width: 60px;
     height: 34px;
-    margin-right: 5px; /* Space between the toggle and label */
+    margin-right: 5px;
 }
 
 .toggle-switch input {
@@ -106,7 +138,7 @@ button:hover {
 }
 
 input:checked + .slider {
-    background-color: #00796b; /* Dark Mode Color */
+    background-color: #00796b;
 }
 
 input:checked + .slider:before {
@@ -114,10 +146,19 @@ input:checked + .slider:before {
 }
 
 #modeLabel {
-    margin-left: 5px; /* Small space between toggle and label */
+    margin-left: 5px;
 }
 
 img {
     max-width: 80px;
     margin-top: 10px;
+}
+
+.sun-icon {
+    animation: rotateSun 20s linear infinite;
+}
+
+@keyframes rotateSun {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
